@@ -1,14 +1,23 @@
-const loadPhones = async(searchText) => {
+const loadPhones = async(searchText, limitData) => {
     const url = ` https://openapi.programming-hero.com/api/phones?search=${searchText}`;
     
     const res = await fetch(url);
     const data = await res.json();
-    displayData(data.data)
+    displayData(data.data, limitData)
 };
 
-const displayData = (phones) => {
+const displayData = (phones, limitData) => {
     const phoneContainer = document.getElementById("phones-container")
-    phoneContainer.innerHTML = ''
+    phoneContainer.innerHTML = '';
+    
+    const showAllBtn = document.getElementById("showAll-btn")
+    if(limitData && phones.length > 6){
+      phones = phones.slice(0, 6);
+      showAllBtn.classList.remove("d-none")
+    }else{
+      showAllBtn.classList.add("d-none")
+    }
+
     phones.map((phone) => {
         // console.log(phone);
         const singlePhone = document.createElement("div");
@@ -33,10 +42,14 @@ const displayData = (phones) => {
     })
 };
 
-const searchPhones = () => {
+const processSearch = (limitData) => {
    const searchText = document.getElementById("search-input-field").value;
-   loadPhones(searchText)
+   loadPhones(searchText, limitData)
 };
+
+const searchPhones = () => {
+  processSearch(6)
+}
 
 const showDetails = async (id) => {
     const url = `https://openapi.programming-hero.com/api/phone/${id}`;
@@ -68,4 +81,8 @@ const displayModal = (modalData) => {
      `;
 };
 
-loadPhones("iphone");
+const loadMore = () => {
+  processSearch();
+}
+
+// loadPhones("iphone");
